@@ -2,49 +2,76 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Food Review</title>
+  <title>Fresh Bite – Food Review</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #fef3c7, #ecfeff);
+      margin: 0;
       padding: 20px;
+      font-family: Arial, sans-serif;
+      background:
+        linear-gradient(135deg, #fef3c7, #ecfeff),
+        url("logo.png");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 280px;
     }
 
     .card {
       max-width: 420px;
       margin: auto;
-      background: #ffffff;
+      background: rgba(255, 255, 255, 0.94);
       padding: 22px;
-      border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      border-radius: 18px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+      backdrop-filter: blur(4px);
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .logo img {
+      width: 90px;
     }
 
     h2 {
       text-align: center;
-      margin-bottom: 10px;
+      margin: 10px 0 5px;
+      color: #14532d;
+    }
+
+    p.subtitle {
+      text-align: center;
+      color: #555;
+      font-size: 14px;
+      margin-bottom: 12px;
     }
 
     .stars {
       display: flex;
       justify-content: center;
-      font-size: 30px;
+      font-size: 32px;
       cursor: pointer;
-      margin: 10px 0;
+      margin: 10px 0 15px;
     }
 
     .stars span {
       color: #d1d5db;
+      margin: 0 4px;
+      transition: color 0.2s;
     }
 
     .stars span.active {
       color: #facc15;
     }
 
-    input, textarea, button {
+    input[type="file"],
+    textarea {
       width: 100%;
-      margin-top: 12px;
+      margin-top: 10px;
       padding: 12px;
       border-radius: 10px;
       border: 1px solid #ccc;
@@ -56,12 +83,15 @@
     }
 
     button {
+      width: 100%;
+      margin-top: 16px;
+      padding: 14px;
       background: #22c55e;
-      color: white;
+      color: #fff;
       font-size: 16px;
       border: none;
+      border-radius: 12px;
       cursor: pointer;
-      margin-top: 16px;
     }
 
     button:hover {
@@ -71,13 +101,13 @@
     .response {
       display: none;
       margin-top: 16px;
-      padding: 12px;
+      padding: 14px;
       background: #ecfeff;
-      border-radius: 10px;
+      border-radius: 12px;
       text-align: center;
     }
 
-    img {
+    .response img {
       width: 100%;
       margin-top: 10px;
       border-radius: 10px;
@@ -88,8 +118,14 @@
 <body>
 
   <div class="card">
-    <h2>🍽️ Rate Your Food</h2>
-    <p style="text-align:center;">Your feedback helps us improve</p>
+
+    <!-- Brand Logo -->
+    <div class="logo">
+      <img src="logo.png" alt="Fresh Bite Logo">
+    </div>
+
+    <h2>🍽️ Rate Your Meal</h2>
+    <p class="subtitle">Your feedback helps Fresh Bite serve you better</p>
 
     <!-- Star Rating -->
     <div class="stars" id="stars">
@@ -101,25 +137,27 @@
     </div>
 
     <!-- Optional Inputs -->
-    <input type="file" accept="image/*" id="photo" />
+    <input type="file" accept="image/*" id="photo">
     <textarea id="comment" rows="3" placeholder="Write a comment (optional)"></textarea>
 
     <button onclick="submitReview()">Submit Review</button>
 
+    <!-- Response -->
     <div class="response" id="responseBox">
       <strong>Thank you! 🙌</strong>
       <p id="autoReply"></p>
-      <img id="preview" />
+      <img id="preview">
     </div>
+
   </div>
 
   <script>
     let rating = 0;
 
     const stars = document.querySelectorAll('.stars span');
-    stars.forEach(star => {
+    stars.forEach((star, index) => {
       star.addEventListener('click', () => {
-        rating = star.dataset.value;
+        rating = index + 1;
         stars.forEach(s => s.classList.remove('active'));
         for (let i = 0; i < rating; i++) {
           stars[i].classList.add('active');
@@ -130,23 +168,29 @@
     function submitReview() {
       const comment = document.getElementById('comment').value.trim();
       const photo = document.getElementById('photo').files[0];
+      const responseBox = document.getElementById('responseBox');
+      const autoReply = document.getElementById('autoReply');
+      const preview = document.getElementById('preview');
 
       if (!rating && !comment && !photo) {
         alert("Please give at least a rating, comment, or photo 😊");
         return;
       }
 
-      let reply = "Thanks for your feedback!";
-      if (rating >= 4) reply = "We’re happy you enjoyed the food 😄";
-      else if (rating && rating <= 2) reply = "Sorry! We’ll improve 🙏";
+      let reply = "Thank you for your feedback!";
+      if (rating >= 4) reply = "We’re glad you enjoyed your meal 😄";
+      else if (rating && rating <= 2) reply = "Sorry about that 🙏 We’ll improve";
 
-      document.getElementById('autoReply').innerText = reply;
+      autoReply.innerText = reply;
 
       if (photo) {
-        document.getElementById('preview').src = URL.createObjectURL(photo);
+        preview.src = URL.createObjectURL(photo);
+        preview.style.display = "block";
+      } else {
+        preview.style.display = "none";
       }
 
-      document.getElementById('responseBox').style.display = 'block';
+      responseBox.style.display = "block";
     }
   </script>
 
