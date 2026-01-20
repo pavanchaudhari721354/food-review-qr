@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Food Review</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      padding: 20px;
+    }
+    .card {
+      max-width: 420px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+    }
+    input, textarea, button {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #22c55e;
+      color: white;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #16a34a;
+    }
+    .response {
+      margin-top: 20px;
+      padding: 12px;
+      background: #ecfeff;
+      border-radius: 8px;
+      display: none;
+    }
+    img {
+      width: 100%;
+      margin-top: 10px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2>🍽️ Food Review</h2>
+    <p>Upload your food bowl & share feedback</p>
+
+    <input type="file" accept="image/*" id="photo" />
+    <textarea id="comment" placeholder="Write your comment..."></textarea>
+    <button onclick="submitReview()">Submit Review</button>
+
+    <div class="response" id="responseBox">
+      <strong>Thank you for your review! 🙌</strong>
+      <p id="autoReply"></p>
+      <img id="preview" />
+    </div>
+  </div>
+
+  <script>
+    function submitReview() {
+      const comment = document.getElementById('comment').value;
+      const photo = document.getElementById('photo').files[0];
+      const responseBox = document.getElementById('responseBox');
+      const autoReply = document.getElementById('autoReply');
+      const preview = document.getElementById('preview');
+
+      if (!comment || !photo) {
+        alert('Please add photo and comment');
+        return;
+      }
+
+      autoReply.innerText =
+        "We appreciate your feedback! Our team will use it to improve your dining experience.";
+
+      preview.src = URL.createObjectURL(photo);
+      responseBox.style.display = 'block';
+    }
+  </script>
+
+</body>
+</html>
