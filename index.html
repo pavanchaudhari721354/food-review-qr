@@ -107,10 +107,15 @@
       text-align: center;
     }
 
-   .response img:hover {
-  transform: scale(1.02);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+  .response img {
+  width: 100%;
+  max-height: 260px;
+  object-fit: cover;
+  margin-top: 12px;
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
+
 
   </style>
 </head>
@@ -143,56 +148,30 @@
     <button onclick="submitReview()">Submit Review</button>
 
     <!-- Response -->
-    <div class="response" id="responseBox">
-      <strong>Thank you! 🙌</strong>
-      <p id="autoReply"></p>
-      <img id="preview">
+    <div class="response">
+    <img id="previewImage" style="display:none;">
     </div>
 
   </div>
 
-  <script>
-    let rating = 0;
+ <script>
+  const imageInput = document.getElementById("imageInput");
+  const previewImage = document.getElementById("previewImage");
 
-    const stars = document.querySelectorAll('.stars span');
-    stars.forEach((star, index) => {
-      star.addEventListener('click', () => {
-        rating = index + 1;
-        stars.forEach(s => s.classList.remove('active'));
-        for (let i = 0; i < rating; i++) {
-          stars[i].classList.add('active');
-        }
-      });
-    });
+  imageInput.addEventListener("change", function () {
+    const file = this.files[0];
 
-    function submitReview() {
-      const comment = document.getElementById('comment').value.trim();
-      const photo = document.getElementById('photo').files[0];
-      const responseBox = document.getElementById('responseBox');
-      const autoReply = document.getElementById('autoReply');
-      const preview = document.getElementById('preview');
+    if (!file) return;
 
-      if (!rating && !comment && !photo) {
-        alert("Please give at least a rating, comment, or photo 😊");
-        return;
-      }
-
-      let reply = "Thank you for your feedback!";
-      if (rating >= 4) reply = "We’re glad you enjoyed your meal 😄";
-      else if (rating && rating <= 2) reply = "Sorry about that 🙏 We’ll improve";
-
-      autoReply.innerText = reply;
-
-      if (photo) {
-        preview.src = URL.createObjectURL(photo);
-        preview.style.display = "block";
-      } else {
-        preview.style.display = "none";
-      }
-
-      responseBox.style.display = "block";
-    }
-  </script>
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      previewImage.src = e.target.result;
+      previewImage.style.display = "block";
+    };
+    reader.readAsDataURL(file);
+  });
+</script>
+>
 
 </body>
 </html>
