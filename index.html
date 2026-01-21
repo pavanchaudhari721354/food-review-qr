@@ -8,131 +8,122 @@
   <style>
     body {
       margin: 0;
-      padding: 20px;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #fef3c7, #ecfeff);
+      font-family: Arial, sans-serif;
+      background: #f3f7f2;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     .card {
-     max-width: 420px;
-     margin: auto;
-     padding: 22px;
-     border-radius: 18px;
-     box-shadow: 0 12px 30px rgba(0,0,0,0.12);
-     background:
-       rgba(255, 255, 255, 0.92)
-       url("logo.png");
-     background-repeat: no-repeat;
-     background-position: center 60%;
-     background-size: 180px;
+      background: #ffffff;
+      width: 92%;
+      max-width: 420px;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      text-align: center;
     }
 
-
-    .logo {
-      text-align: center;
+    .brand {
       margin-bottom: 10px;
     }
 
-    .logo img {
-      width: 90px;
+    .brand img {
+      width: 120px;
     }
 
     h2 {
-      text-align: center;
       margin: 10px 0 5px;
-      color: #14532d;
+      color: #1b5e20;
     }
 
-    p.subtitle {
-      text-align: center;
+    p {
       color: #555;
       font-size: 14px;
-      margin-bottom: 12px;
     }
 
+    /* ⭐ STAR RATING */
     .stars {
       display: flex;
       justify-content: center;
-      font-size: 32px;
-      cursor: pointer;
-      margin: 10px 0 15px;
+      gap: 8px;
+      margin: 15px 0;
     }
 
     .stars span {
-      color: #d1d5db;
-      margin: 0 4px;
-      transition: color 0.2s;
+      font-size: 30px;
+      cursor: pointer;
+      color: #ccc;
     }
 
     .stars span.active {
-      color: #facc15;
+      color: #fbc02d;
     }
 
-    input[type="file"],
     textarea {
       width: 100%;
-      margin-top: 10px;
-      padding: 12px;
+      padding: 10px;
       border-radius: 10px;
       border: 1px solid #ccc;
+      resize: none;
+      margin-top: 10px;
       font-size: 14px;
     }
 
-    textarea {
-      resize: none;
+    input[type="file"] {
+      margin-top: 12px;
+    }
+
+    .response img {
+      width: 100%;
+      max-height: 250px;
+      object-fit: cover;
+      border-radius: 14px;
+      margin-top: 12px;
+      display: none;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     }
 
     button {
       width: 100%;
-      margin-top: 16px;
-      padding: 14px;
-      background: #22c55e;
+      margin-top: 15px;
+      padding: 12px;
+      background: #2e7d32;
       color: #fff;
-      font-size: 16px;
       border: none;
       border-radius: 12px;
+      font-size: 16px;
       cursor: pointer;
     }
 
     button:hover {
-      background: #16a34a;
+      background: #1b5e20;
     }
 
-    .response {
+    .thankyou {
       display: none;
-      margin-top: 16px;
-      padding: 14px;
-      background: #ecfeff;
-      border-radius: 12px;
-      text-align: center;
+      margin-top: 15px;
+      color: #2e7d32;
+      font-weight: bold;
     }
-
-  .response img {
-  width: 100%;
-  max-height: 260px;
-  object-fit: cover;
-  margin-top: 12px;
-  border-radius: 14px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-}
-
-
   </style>
 </head>
 
 <body>
 
   <div class="card">
-
-    <!-- Brand Logo -->
-    <div class="logo">
-      <img src="logo.png" alt="Fresh Bite Logo">
+    <!-- BRAND LOGO -->
+    <div class="brand">
+      <!-- Replace src later with your logo -->
+      <img src="https://via.placeholder.com/200x120?text=FRESH+BITE" alt="Fresh Bite">
     </div>
 
-    <h2>🍽️ Rate Your Meal</h2>
-    <p class="subtitle">Your feedback helps Fresh Bite serve you better</p>
+    <h2>Rate Your Food 🍽️</h2>
+    <p>Rating OR comment is enough</p>
 
-    <!-- Star Rating -->
+    <!-- STAR RATING -->
     <div class="stars" id="stars">
       <span data-value="1">★</span>
       <span data-value="2">★</span>
@@ -141,37 +132,64 @@
       <span data-value="5">★</span>
     </div>
 
-    <!-- Optional Inputs -->
-    <input type="file" accept="image/*" id="photo">
-    <textarea id="comment" rows="3" placeholder="Write a comment (optional)"></textarea>
+    <!-- COMMENT -->
+    <textarea id="comment" rows="3" placeholder="Write your feedback (optional)"></textarea>
+
+    <!-- IMAGE -->
+    <input type="file" id="imageInput" accept="image/*">
+
+    <!-- IMAGE PREVIEW -->
+    <div class="response">
+      <img id="previewImage">
+    </div>
 
     <button onclick="submitReview()">Submit Review</button>
 
-    <!-- Response -->
-    <div class="response">
-    <img id="previewImage" style="display:none;">
+    <div class="thankyou" id="thankyou">
+      ❤️ Thank you for your feedback!
     </div>
-
   </div>
 
- <script>
-  const imageInput = document.getElementById("imageInput");
-  const previewImage = document.getElementById("previewImage");
+  <script>
+    let selectedRating = 0;
+    const stars = document.querySelectorAll(".stars span");
 
-  imageInput.addEventListener("change", function () {
-    const file = this.files[0];
+    stars.forEach(star => {
+      star.addEventListener("click", () => {
+        selectedRating = star.getAttribute("data-value");
+        stars.forEach(s => s.classList.remove("active"));
+        for (let i = 0; i < selectedRating; i++) {
+          stars[i].classList.add("active");
+        }
+      });
+    });
 
-    if (!file) return;
+    const imageInput = document.getElementById("imageInput");
+    const previewImage = document.getElementById("previewImage");
 
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      previewImage.src = e.target.result;
-      previewImage.style.display = "block";
-    };
-    reader.readAsDataURL(file);
-  });
-</script>
->
+    imageInput.addEventListener("change", function () {
+      const file = this.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        previewImage.src = e.target.result;
+        previewImage.style.display = "block";
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function submitReview() {
+      const comment = document.getElementById("comment").value.trim();
+
+      if (selectedRating == 0 && comment === "") {
+        alert("Please give rating OR comment");
+        return;
+      }
+
+      document.getElementById("thankyou").style.display = "block";
+    }
+  </script>
 
 </body>
 </html>
