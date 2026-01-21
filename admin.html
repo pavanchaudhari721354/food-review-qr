@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fresh Bite – Admin Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f1f8e9;
+      padding: 15px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2e7d32;
+    }
+
+    .review {
+      background: #fff;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .rating {
+      color: #fbc02d;
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    .comment {
+      font-size: 15px;
+      margin-bottom: 6px;
+    }
+
+    .date {
+      font-size: 12px;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+
+<h1>📊 Admin Dashboard</h1>
+
+<div id="reviews"></div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getFirestore, collection, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDwxoIiBHOzJWlv2Vkuja9-WWcCXhGqjv8",
+    authDomain: "fresh-bite-reviews.firebaseapp.com",
+    projectId: "fresh-bite-reviews",
+    storageBucket: "fresh-bite-reviews.firebasestorage.app",
+    messagingSenderId: "397138911775",
+    appId: "1:397138911775:web:31a4e98cf4ec62c7076b2a"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const reviewsDiv = document.getElementById("reviews");
+
+  const q = query(
+    collection(db, "reviews"),
+    orderBy("createdAt", "desc")
+  );
+
+  onSnapshot(q, snapshot => {
+    reviewsDiv.innerHTML = "";
+    snapshot.forEach(doc => {
+      const data = doc.data();
+
+      const stars = "★".repeat(data.rating || 0);
+
+      reviewsDiv.innerHTML += `
+        <div class="review">
+          <div class="rating">${stars}</div>
+          <div class="comment">${data.comment || ""}</div>
+          <div class="date">
+            ${data.createdAt?.toDate().toLocaleString() || ""}
+          </div>
+        </div>
+      `;
+    });
+  });
+</script>
+
+</body>
+</html>
